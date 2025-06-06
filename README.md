@@ -23,21 +23,8 @@ This project automates the analysis and optimization of Reserved Instances (RI) 
 - Optional: Logic App or SendGrid for notifications
 
 ---
-## 📦 Directory Structure
-
-azure-ri-optimizer/
-├── .github/
-│ └── workflows/
-│ └── deploy-functionapp.yml # CI/CD pipeline
-├── CheckRIUtilization/ # Function folder
-│ ├── init.py # Main trigger
-│ ├── function.json # Timer schedule
-│ ├── ri_optimizer.py # RI + SP logic
-├── requirements.txt
-├── host.json
-├── .funcignore
-├── .gitignore
-├── README.md
+<pre> ## 📦 Directory Structure
+azure-ri-optimizer/ ├── .github/ │ └── workflows/ │ └── deploy-functionapp.yml # CI/CD pipeline ├── CheckRIUtilization/ # Function folder │ ├── __init__.py # Main trigger │ ├── function.json # Timer schedule │ ├── ri_optimizer.py # RI + SP logic ├── requirements.txt # Dependencies ├── host.json # Azure Functions host settings ├── .funcignore # Ignore rules for Azure Functions Core Tools ├── .gitignore # Git ignore rules └── README.md # Project documentation </pre>
 
 ---
 
@@ -85,7 +72,9 @@ Save the following:
 `password` → `CLIENT_SECRET`
 
 `tenant → TENANT_ID`
+
 You’ll use these in the Azure Function Configuration.
+
 ---
 ## 🏗️ Setup Azure Function (Local Dev)
 **1. Initialize the Function App**
@@ -212,12 +201,15 @@ requests
 ---
 ## 🚀 GitHub Actions Deployment
 **Step 1: Add Secrets to GitHub**
-Name	                      Description
-`AZURE_CREDENTIALS`	        Output from `az ad sp create-for-rbac --sdk-auth`
-`FUNCTIONAPP_NAME`	        Your deployed Azure Function name
-`AZURE_REGION`	            Your Azure region (e.g. canadacentral)
-`RESOURCE_GROUP`	          Your Azure RG name
 
+```
+Name               Description
+---------------   ----------------------------------------------------------
+AZURE_CREDENTIALS  Output from `az ad sp create-for-rbac --sdk-auth`
+FUNCTIONAPP_NAME   Your deployed Azure Function name
+AZURE_REGION       Your Azure region (e.g. canadacentral)
+RESOURCE_GROUP     Your Azure RG name
+```
 **Step 2: Add Workflow File**
 `.github/workflows/deploy-functionapp.yml`
 
@@ -258,6 +250,7 @@ jobs:
 func start
 ```
 ✅ CSV report generated at `/tmp/ri_sp_report_YYYYMMDD.csv`
+
 ---
 ## ✉️ (Optional) Add Logic App Email Workflow
 1. Trigger: When new blob (CSV) is uploaded
@@ -289,52 +282,52 @@ Before we begin, ensure you have the following:
 
 ### Step 2: Define the Trigger
 1. Open the Logic App Designer:
-  - Once the Logic App is deployed, click on "Go to resource".
-  - Under "Development Tools", click on "Logic App Designer".
+    - Once the Logic App is deployed, click on "Go to resource".
+    - Under "Development Tools", click on "Logic App Designer".
 
 2. Choose a Trigger:
-  - In the search box, type "blob".
-  - Select "When a blob is added or modified (V2)".
+    - In the search box, type "blob".
+    - Select "When a blob is added or modified (V2)".
 
 3. Configure the Trigger:
-  - Storage Account Connection: Create a new connection using the storage account name and key.
-  - Container Name: Select the container where your Azure Function saves the CSV reports (e.g., reports).
-  - Blob Path Begins With: Leave blank unless you want to filter specific folders or filenames.
-  - How often do you want to check for items?: Set the interval (e.g., every 1 hour).
+    - Storage Account Connection: Create a new connection using the storage account name and key.
+    - Container Name: Select the container where your Azure Function saves the CSV reports (e.g., reports).
+    - Blob Path Begins With: Leave blank unless you want to filter specific folders or filenames.
+    - How often do you want to check for items?: Set the interval (e.g., every 1 hour).
     
 ### Step 3: Get Blob Content
 1. Add a New Step:
-  - Click on "New step".
-  - Search for "Get blob content (V2)" and select it.
+    - Click on "New step".
+    - Search for "Get blob content (V2)" and select it.
 
 2. Configure the Action:
-  - Storage Account Connection: Use the same connection as before.
-  - Blob: Click on the field and select "Path" from the dynamic content (this refers to the blob that triggered the Logic App).
+    - Storage Account Connection: Use the same connection as before.
+    - Blob: Click on the field and select "Path" from the dynamic content (this refers to the blob that triggered the Logic App).
 
 ### Step 4: Send Email with Attachment
 1. Add a New Step:
-  - Click on "New step".
-  - Depending on your email service, choose one of the following:
-      - Office 365 Outlook: Search for "Send an email (V2)".
-      - SendGrid: Search for "Send email (V4)".
+    - Click on "New step".
+    - Depending on your email service, choose one of the following:
+        - Office 365 Outlook: Search for "Send an email (V2)".
+        - SendGrid: Search for "Send email (V4)".
 
 2. Configure the Email Action:
-  - To: Enter the recipient's email address.
-  - Subject: e.g., "Monthly Azure Cost Optimization Report".
-  - Body: e.g., "Please find the attached monthly report on Reserved Instances and Savings Plans utilization."
-  - Attachments:
-      - Click on "Add new parameter" and select "Attachments".
-      - For Attachment Name, use the expression:
-        ```bash
-        last(split(triggerOutputs()?['headers']['x-ms-file-last-modified'],'/'))
-        ```
-        This will extract the filename from the blob path.
-      - For Attachment Content, select "File Content" from the dynamic content (output from the "Get blob content" action).
-   
+    - To: Enter the recipient's email address.
+    - Subject: e.g., "Monthly Azure Cost Optimization Report".
+    - Body: e.g., "Please find the attached monthly report on Reserved Instances and Savings Plans utilization."
+    - Attachments:
+        - Click on "Add new parameter" and select "Attachments".
+        - For Attachment Name, use the expression:
+          ```bash
+          last(split(triggerOutputs()?['headers']['x-ms-file-last-modified'],'/'))
+          ```
+          This will extract the filename from the blob path.
+        - For Attachment Content, select "File Content" from the dynamic content (output from the "Get blob content" action).
+     
 ### Step 5: Save and Test the Logic App
 1. Save the Logic App:
-  - Click on "Save" at the top of the designer.
+    - Click on "Save" at the top of the designer.
 
 2. Test the Workflow:
-  - Upload a new CSV report to the specified blob container.
-  - The Logic App should trigger, retrieve the blob content, and send an email with the CSV file attached.
+    - Upload a new CSV report to the specified blob container.
+    - The Logic App should trigger, retrieve the blob content, and send an email with the CSV file attached.
