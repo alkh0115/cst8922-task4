@@ -23,9 +23,23 @@ This project automates the analysis and optimization of Reserved Instances (RI) 
 - Optional: Logic App or SendGrid for notifications
 
 ---
-<pre> ## 📦 Directory Structure
-azure-ri-optimizer/ ├── .github/ │ └── workflows/ │ └── deploy-functionapp.yml # CI/CD pipeline ├── CheckRIUtilization/ # Function folder │ ├── __init__.py # Main trigger │ ├── function.json # Timer schedule │ ├── ri_optimizer.py # RI + SP logic ├── requirements.txt # Dependencies ├── host.json # Azure Functions host settings ├── .funcignore # Ignore rules for Azure Functions Core Tools ├── .gitignore # Git ignore rules └── README.md # Project documentation </pre>
+## 📦 Directory Structure
 
+```
+📁 azure-ri-optimizer/
+├── 📁 .github/
+│   └── 📁 workflows/
+│       └── 📄 **deploy-functionapp.yml**       # CI/CD pipeline
+├── 📁 CheckRIUtilization/                     # Function folder
+│   ├── 📄 **__init__.py**                     # Main trigger
+│   ├── 📄 function.json                       # Timer schedule
+│   └── 📄 ri_optimizer.py                     # RI + SP logic
+├── 📄 requirements.txt                        # Dependencies
+├── 📄 host.json                               # Azure Functions host settings
+├── 📄 .funcignore                             # Azure Functions ignore rules
+├── 📄 .gitignore                              # Git ignore rules
+└── 📄 **README.md**                           # Project documentation
+```
 ---
 
 ## 🛠️ Setup Instructions
